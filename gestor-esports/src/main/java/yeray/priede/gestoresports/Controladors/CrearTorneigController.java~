@@ -1,0 +1,43 @@
+package yeray.priede.gestoresports.Controladors;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import yeray.priede.gestoresports.Classes.Torneig;
+
+import java.time.LocalDate;
+
+public class CrearTorneigController {
+
+    @FXML
+    private TextField txtNomTorneig;
+    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private TextField txtJocTorneig;
+    @FXML
+    private TextField txtFormatTorneig;
+    @FXML
+    private TextField txtPremisTorneig;
+
+    @FXML
+    public void crearTorneig(ActionEvent actionEvent) {
+        String nomTorneig = txtNomTorneig.getText();
+        LocalDate data = datePicker.getValue();
+        String jocTorneig = txtJocTorneig.getText();
+        String formatTorneig = txtFormatTorneig.getText();
+        String premisTorneig = txtPremisTorneig.getText();
+
+        // Verificar que todos los campos estén completos
+        if (nomTorneig.isEmpty() || data == null || jocTorneig.isEmpty() || formatTorneig.isEmpty() || premisTorneig.isEmpty()) {
+            mostrarError("Tots els camps són obligatoris per crear un torneig.");
+            return;
+        }
+
+        // Crear el nuevo torneo
+        Torneig nouTorneig = new Torneig(nomTorneig, data, jocTorneig, formatTorneig, premisTorneig);
+
+        // Aquí puedes añadir el torneo a la lista de torneos o cualquier otra acción necesaria
+        // lstTornejos.

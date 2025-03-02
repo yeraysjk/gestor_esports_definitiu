@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="yeray.priede.gestoresports.Controladors.LoginViewController">
+
+    <VBox alignment="CENTER" spacing="20" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="50.0">
+        <Text style="-fx-font-size: 24px; -fx-text-fill: white;" text="Iniciar Sessió" />
+        <TextField fx:id="usernameField" promptText="Usuari" />
+        <PasswordField fx:id="passwordField" promptText="Contrasenya" />
+        <Button onAction="#onLoginClick" text="Login" />
+      <Button fx:id="crearCompteButton" mnemonicParsing="false" onAction="#onRegisterClick" text="Crear compte" />
+    </VBox>
+
+</AnchorPane>
