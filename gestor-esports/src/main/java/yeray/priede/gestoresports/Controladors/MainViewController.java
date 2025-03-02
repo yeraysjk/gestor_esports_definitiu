@@ -2,19 +2,22 @@ package yeray.priede.gestoresports.Controladors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import yeray.priede.gestoresports.Classes.GSON;
 import yeray.priede.gestoresports.Classes.Participant;
 import yeray.priede.gestoresports.Classes.Torneig;
-import yeray.priede.gestoresports.GSON;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class MainViewController {
+public class MainViewController implements Initializable {
 
     @FXML
     private ListView<Torneig> lstTornejos;
@@ -151,65 +154,58 @@ public class MainViewController {
             mostrarError("El nom del torneig no pot estar buit.");
         }
     }
-    // Controlador: MainViewController.java
+
+    // Método para cargar los torneos
     @FXML
     public void cargarTornejos() {
         try {
             // Llamar al método que carga los torneos desde el archivo JSON
-            List<Torneig> tornejos = cargarTornejosExistentes();
+            Map<String, Torneig> tornejos = cargarTornejosExistentes();
 
-            // Verificar si la lista no está vacía
+            // Verificar si el mapa no está vacío
             if (tornejos != null && !tornejos.isEmpty()) {
                 // Actualizar la lista en el ListView
-                lstTornejos.getItems().setAll(tornejos);
+                lstTornejos.getItems().setAll(tornejos.values());
                 mostrarInfo("Tornejos carregats correctament.");
             } else {
                 mostrarError("No s'han carregat tornejos.");
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             mostrarError("Error carregant els tornejos: " + e.getMessage());
         }
     }
 
+    // Método para guardar un torneo en el archivo JSON (en formato clave-valor)
     private void guardarTorneigEnJson(Torneig nouTorneig) {
         try {
             // Leer los torneos existentes (si los hay)
-            List<Torneig> tornejosList = cargarTornejosExistentes();
+            Map<String, Torneig> tornejosMap = cargarTornejosExistentes();  // Cambié la lista por un mapa
 
-            // Añadir el nuevo torneo a la lista
-            tornejosList.add(nouTorneig);  // Añadimos el nuevo torneo
+            // Añadir el nuevo torneo al mapa
+            tornejosMap.put(nouTorneig.getNom(), nouTorneig);  // La clave es el nombre del torneo
 
-            // Usamos la librería GSON para escribir la lista de torneos en el archivo JSON
+            // Usamos la librería GSON para escribir el mapa de torneos en el archivo JSON
             GSON gsonHelper = new GSON();
-            gsonHelper.escriuObjecteJAVAAFitxerJson("tornejos.json", tornejosList);  // Escribimos la lista actualizada en el archivo
+            gsonHelper.escriuMapAJson("tornejos.json", tornejosMap);  // Escribimos el mapa actualizado en el archivo
 
             mostrarInfo("Torneig desat correctament en el fitxer JSON.");
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             mostrarError("Error en desar el torneig al fitxer JSON: " + e.getMessage());
         }
     }
 
-    public List<Torneig> cargarTornejosExistentes() throws IOException, ParseException {
+    // Método para cargar los torneos desde el archivo JSON
+    public Map<String, Torneig> cargarTornejosExistentes() throws IOException {
         File archivo = new File("tornejos.json");
         if (!archivo.exists() || archivo.length() == 0) {
-            // Si el archivo no existe o está vacío, retornar una lista vacía
-            return new ArrayList<>();
+            // Si el archivo no existe o está vacío, retornar un mapa vacío
+            return new HashMap<>();
         } else {
             // El archivo tiene contenido, cargar los torneos desde el archivo
             GSON gsonHelper = new GSON();
-            List<Torneig> tornejos = gsonHelper.retornaFitxerJsonALlistaObjecte("tornejos.json", Torneig.class);
-
-            // Imprimir en consola los torneos cargados
-            System.out.println("Torneos cargados: " + tornejos);
-
-            return tornejos;
+            return gsonHelper.retornaFitxerJsonAMap("tornejos.json", String.class, Torneig.class);
         }
     }
-
-
-
-
-
 
     // Método para mostrar un mensaje de error
     private void mostrarError(String missatge) {
@@ -225,5 +221,11 @@ public class MainViewController {
         alert.setTitle("Informació");
         alert.setContentText(missatge);
         alert.showAndWait();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Llamar a cargarTornejos cuando la vista se inicializa
+        cargarTornejos();
     }
 }

@@ -39,7 +39,6 @@ public class MainApp extends Application {
             MainViewController controller = loader.getController();
 
             // Cargar los torneos desde el archivo
-            controller.cargarTornejos();
 
         } catch (IOException e) {
             e.printStackTrace();

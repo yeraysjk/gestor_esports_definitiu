@@ -1,34 +1,10 @@
-[
-  {
-    "nom": "ELE",
-    "data": "2025-02-26",
-    "joc": "ADASD",
-    "format": "EEE",
-    "premis": "EEE",
-    "participants": []
-  },
-  {
-    "nom": "a",
-    "data": "2025-02-28",
-    "joc": "a",
-    "format": "a",
-    "premis": "a",
-    "participants": []
-  },
-  {
-    "nom": "a",
-    "data": "2025-03-07",
-    "joc": "a",
-    "format": "a",
-    "premis": "a",
-    "participants": []
-  },
-  {
-    "nom": "ASAD",
+{
+  "A": {
+    "nom": "A",
     "data": "2025-03-06",
     "joc": "A",
     "format": "A",
     "premis": "A",
     "participants": []
   }
-]
+}
