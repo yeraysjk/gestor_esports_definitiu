@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Torneig {
-    public String nom;
-    public LocalDate data;
+    private String nom;
+    private LocalDate data;
     private String joc;
     private String format;
     private String premis;
-    private List<Participant> participants;  // Cambiado a Participant
+    private List<Participant> participants;
 
     public Torneig(String nom, LocalDate data, String joc, String format, String premis) {
         this.nom = nom;
@@ -21,7 +21,6 @@ public class Torneig {
         this.participants = new ArrayList<>();
     }
 
-    // Getters i setters
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
 
@@ -40,9 +39,7 @@ public class Torneig {
     public List<Participant> getParticipants() { return participants; }
     public void setParticipants(List<Participant> participants) { this.participants = participants; }
 
-    public void afegirParticipant(Participant participant) {  // Cambiado para aceptar Participant
-        participants.add(participant);
-    }
+    public void afegirParticipant(Participant participant) { participants.add(participant); }
 
     @Override
     public String toString() {

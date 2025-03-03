@@ -8,37 +8,28 @@ import javafx.stage.Stage;
 import yeray.priede.gestoresports.Controladors.MainViewController;
 
 import java.io.IOException;
+
 public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Cargar la vista principal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/yeray/priede/gestoresports/MainView.fxml"));
             AnchorPane root = loader.load();
 
-            // Establecer la escena
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Gestió eSports");
 
-            // Establecer el tamaño de la ventana
-            primaryStage.setWidth(800);  // Ancho deseado
-            primaryStage.setHeight(600); // Alto deseado
+            primaryStage.setMinWidth(600);
+            primaryStage.setMinHeight(400);
+            primaryStage.setMaxWidth(1200);
+            primaryStage.setMaxHeight(900);
 
-            // Hacer la ventana redimensionable pero con un tamaño máximo y mínimo
-            primaryStage.setMinWidth(600);   // Ancho mínimo
-            primaryStage.setMinHeight(400);  // Alto mínimo
-            primaryStage.setMaxWidth(1200);  // Ancho máximo
-            primaryStage.setMaxHeight(900);  // Alto máximo
-
-            // Mostrar la ventana
             primaryStage.show();
 
-            // Obtener el controlador de la vista principal
             MainViewController controller = loader.getController();
-
-            // Cargar los torneos desde el archivo
+            controller.carregarDades(); // Càrrega automàtica de dades JSON
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,6 +37,6 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);  // Llama al método launch de JavaFX
+        launch(args);
     }
 }

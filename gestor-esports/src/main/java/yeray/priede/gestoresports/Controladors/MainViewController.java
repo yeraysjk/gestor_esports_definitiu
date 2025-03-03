@@ -30,6 +30,14 @@ public class MainViewController implements Initializable {
     @FXML
     private Stack<String> historialAccions = new Stack<>();
 
+
+    @FXML
+    public void carregarDades() {
+        // Llama a la función que carga los torneos y participantes
+        cargarTornejos();
+        mostrarInfo("Dades carregades correctament.");
+    }
+
     // Método para agregar un participante
     @FXML
     private void afegirParticipant(ActionEvent event) {
@@ -47,9 +55,16 @@ public class MainViewController implements Initializable {
 
         Torneig torneigSeleccionat = lstTornejos.getSelectionModel().getSelectedItem();
         if (torneigSeleccionat != null) {
+            // Afegir el participant al torneig seleccionat
             torneigSeleccionat.afegirParticipant(participant);
             lstParticipants.getItems().add(participant);
             mostrarInfo("Participant afegit correctament.");
+
+            // Actualizar el JSON de participants
+            guardarParticipantsEnJson();
+
+            // Actualizar el JSON de tornejos con el nou participant
+            guardarTorneigEnJson(torneigSeleccionat);
         } else {
             mostrarError("Selecció de torneig incorrecta.");
         }
@@ -174,19 +189,44 @@ public class MainViewController implements Initializable {
             mostrarError("Error carregant els tornejos: " + e.getMessage());
         }
     }
+    // Método para cargar los participantes desde participants.json
+    public void cargarParticipants() {
+        try {
+            GSON gsonHelper = new GSON();
+            List<Participant> participants = gsonHelper.retornaFitxerJsonALlista("participants.json");
+
+            // Recorrer la lista de participantes y añadirlos a los torneos correspondientes
+            for (Participant participant : participants) {
+                // Encontrar el torneo donde agregar al participante (esto depende de cómo quieras asociarlos)
+                for (Torneig torneig : lstTornejos.getItems()) {
+                    // En este caso, vamos a agregar el participante al torneo que coincida con su nombre
+                    if (torneig.getNom().equals(participant.getEquipo())) { // Suponiendo que el equipo coincide con el nombre del torneo
+                        torneig.afegirParticipant(participant);
+                    }
+                }
+            }
+
+            mostrarInfo("Participants carregats correctament.");
+
+        } catch (IOException e) {
+            mostrarError("Error carregant els participants: " + e.getMessage());
+        }
+    }
+
 
     // Método para guardar un torneo en el archivo JSON (en formato clave-valor)
-    private void guardarTorneigEnJson(Torneig nouTorneig) {
+    // Modificar este método para asegurar que se guarden los torneos con sus participantes
+    private void guardarTorneigEnJson(Torneig torneig) {
         try {
             // Leer los torneos existentes (si los hay)
-            Map<String, Torneig> tornejosMap = cargarTornejosExistentes();  // Cambié la lista por un mapa
+            Map<String, Torneig> tornejosMap = cargarTornejosExistentes(); // Cargar los torneos existentes
 
-            // Añadir el nuevo torneo al mapa
-            tornejosMap.put(nouTorneig.getNom(), nouTorneig);  // La clave es el nombre del torneo
+            // Actualizar el torneo con el nuevo participante
+            tornejosMap.put(torneig.getNom(), torneig);
 
-            // Usamos la librería GSON para escribir el mapa de torneos en el archivo JSON
+            // Usar la librería GSON para escribir el mapa de torneos en el archivo JSON
             GSON gsonHelper = new GSON();
-            gsonHelper.escriuMapAJson("tornejos.json", tornejosMap);  // Escribimos el mapa actualizado en el archivo
+            gsonHelper.escriuMapAFitxerJson("tornejos.json", tornejosMap);  // Escribir el mapa actualizado de torneos
 
             mostrarInfo("Torneig desat correctament en el fitxer JSON.");
         } catch (IOException e) {
@@ -194,18 +234,18 @@ public class MainViewController implements Initializable {
         }
     }
 
+
     // Método para cargar los torneos desde el archivo JSON
     public Map<String, Torneig> cargarTornejosExistentes() throws IOException {
         File archivo = new File("tornejos.json");
         if (!archivo.exists() || archivo.length() == 0) {
-            // Si el archivo no existe o está vacío, retornar un mapa vacío
-            return new HashMap<>();
+            return new HashMap<>(); // Retorna un mapa vacío si no existe el archivo o está vacío
         } else {
-            // El archivo tiene contenido, cargar los torneos desde el archivo
             GSON gsonHelper = new GSON();
-            return gsonHelper.retornaFitxerJsonAMap("tornejos.json", String.class, Torneig.class);
+            return gsonHelper.retornaFitxerJsonAMap("tornejos.json"); // Solo se pasa el archivo
         }
     }
+
 
     // Método para mostrar un mensaje de error
     private void mostrarError(String missatge) {
@@ -227,5 +267,27 @@ public class MainViewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Llamar a cargarTornejos cuando la vista se inicializa
         cargarTornejos();
+        cargarParticipants(); // Cargar los participantes desde el archivo JSON
     }
+
+    // Método para guardar la lista de participantes en participants.json
+    private void guardarParticipantsEnJson() {
+        try {
+            // Obtener la lista de todos los participantes de todos los torneos
+            List<Participant> participants = new ArrayList<>();
+            for (Torneig torneig : lstTornejos.getItems()) {
+                participants.addAll(torneig.getParticipants());
+            }
+
+            // Usar la clase GSON para escribir la lista en el archivo JSON
+            GSON gsonHelper = new GSON();
+            gsonHelper.escriuLlistaAJson("participants.json", participants);
+
+            mostrarInfo("Participants desats correctament en el fitxer JSON.");
+        } catch (IOException e) {
+            mostrarError("Error en desar els participants al fitxer JSON: " + e.getMessage());
+        }
+    }
+
+
 }
